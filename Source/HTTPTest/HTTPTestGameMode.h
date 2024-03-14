@@ -37,7 +37,14 @@ protected:
 
 	void BreakTime();
 
-	void GetCurrentTime();
+	void SecondCounterCallback();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	FText GetCurrentTime();
+
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentCity(ECity CurrentCity);
 
 private:
 
@@ -53,6 +60,9 @@ private:
 	int32 Hour;
 	int32 Minute;
 	int32 Second;
+
+	FTimerHandle SecondCounter;
+	float SecondCountFloat = 1.f;
 };
 
 

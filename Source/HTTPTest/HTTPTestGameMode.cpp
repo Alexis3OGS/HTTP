@@ -25,6 +25,7 @@ void AHTTPTestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	SendHTTPGet();
+	GetWorldTimerManager().SetTimer(SecondCounter,this,&AHTTPTestGameMode::SecondCounterCallback,SecondCountFloat);
 }
 
 void AHTTPTestGameMode::SendHTTPGet()
@@ -76,10 +77,10 @@ void AHTTPTestGameMode::SwitchOnCity()
 		CityURL.Append("Asia/Tokyo");
 		break;
 	case ECity::EC_London:
-		CityURL.Append("Asia/Tokyo");
+		CityURL.Append("Europe/London");
 		break;
 	case ECity::EC_NewYork:
-		CityURL.Append("Asia/Tokyo");
+		CityURL.Append("America/New_York");
 		break;
 	case ECity::EC_Default:
 		break;
@@ -100,14 +101,51 @@ void AHTTPTestGameMode::BreakTime()
 
 }
 
-void AHTTPTestGameMode::GetCurrentTime()
+FText AHTTPTestGameMode::GetCurrentTime()
 {
 	FString Hours;
 	FString Minutes;
 	FString Seconds;
 
-	/*if (Hour < 10)
+	if (Hour < 10)
 	{
-		Hours = FString() 
-	}*/
+		Hours = FString("0").Append(FString::FromInt(Hour));
+	}
+	else
+	{
+		Hours = FString::FromInt(Hour);
+	}
+	if (Minute < 10)
+	{
+		Hours = FString("0").Append(FString::FromInt(Minute));
+	}
+	else
+	{
+		Minutes = FString::FromInt(Minute);
+	}
+	if (Second < 10)
+	{
+		Seconds = FString("0").Append(FString::FromInt(Second));
+	}
+	else
+	{
+		Seconds = FString::FromInt(Second);
+	}
+
+	FString ReturnString = Hours.Append(FString(": ")).Append(Minutes).Append(FString(": ").Append(Seconds));
+	return FText::FromString(ReturnString);
+}
+
+void AHTTPTestGameMode::SetCurrentCity(ECity CurrentCity)
+{
+	City = CurrentCity;
+	SendHTTPGet();
+}
+
+void AHTTPTestGameMode::SecondCounterCallback()
+{
+	Time += FTimespan::FromSeconds(1);
+	BreakTime();
+
+	GetWorldTimerManager().SetTimer(SecondCounter, this, &AHTTPTestGameMode::SecondCounterCallback, SecondCountFloat);
 }
